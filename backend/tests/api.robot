@@ -41,18 +41,18 @@ TC_06: Dodawanie/usuwanie artykulow
 
 TC_07: Dodanie artykułu Y
     ${headers}=  Create Dictionary  Content-Type=application/json
-    ${response}=  POST  http://proxy/articles/  data={"title":"test00","content":"test"}  headers=${headers}
+    ${response}=  POST  http://proxy/articles/  data={"title":"test00","content":"test"}  headers=${headers}    expected_status=201
 
 TC_08: Pobranie listy artykułów i sprawdzenie, że artykuł Y jest na liście
-    ${response}=    GET    http://proxy/articles/    expected_status=200
+    ${response}=    GET    ${PROXY_ARTICLES}    expected_status=200
     ${articles}=    Set Variable    ${response.json()}
     ${titles}=    Evaluate    [a["title"] for a in ${articles}]    json
     Should Contain  ${titles}  test00
 TC_09: Usunięcie artykułu Y
-    ${response}=    GET    http://proxy/articles/    expected_status=200
+    ${response}=    GET    ${PROXY_ARTICLES}     expected_status=200
     ${articles}=    Set Variable    ${response.json()}
     ${found}=    Evaluate    next((a for a in ${articles} if a["title"] == 'test00'), None)    json
-    DELETE  http://proxy/articles/${found['id']}  expected_status=204
+    DELETE  ${PROXY_ARTICLES}${found['id']}  expected_status=204
 
 TC_10: Pobranie listy artkułów i sprawdzenie, że nie ma tam artykułu Y
     ${response}=    GET    ${PROXY_ARTICLES}    expected_status=200
